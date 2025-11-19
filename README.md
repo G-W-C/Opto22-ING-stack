@@ -1,15 +1,40 @@
 # Opto22-ING-stack
 
-##### This tutorial is for creating an open source historian using Opto22 Hardware, Node-Red, InfluxDBv2, and Grafana
+##### This tutorial explains how to build an open-source historian using Opto22 Hardware, Node-RED, InfluxDB v2, and Grafana.
 
-The docker-compose.yml is configured for users running Node-RED on the groov EPIC.
-###### SNAP-PAC users (without and groov EPIC) can add Node-RED to the docker-compose.yml
+<img width="745" height="638" alt="image" src="https://github.com/user-attachments/assets/a0dae69b-d5ad-4278-a145-baa6aab12d40" />
 
-* Download the docker-compose.yml and nignx.conf to the same project directory.
-* Open a terminal in the project directory and run the following
+## Overview
+This architecture collects data from Opto22 controllers (groov EPIC or SNAP-PAC) using Node-RED running on the groov EPIC with ```node-red-contrib-pac``` nodes. Node-RED handles data ingestion and transformation, then sends the data to **InfluxDB** using the ```node-red-contrib-influxdb``` node for simplified transport to InfluxDB, where it is stored for historical logging. Grafana provides visualization and dashboards for analysis.
+**EPIC → Node-RED → InfluxDB → Grafana**
+
+The Docker stack for **InfluxDB** and **Grafana** must run on a separate **IPC**, **server**, or even a **Raspberry Pi 5 with NVMe storage**.
+
+This stack is inspired by the MING stack (MQTT → Node-RED → InfluxDB → Grafana) but simplifies it by using node-red-contrib-pac to collect data from Opto22 controllers and node-red-contrib-influxdb to send it to InfluxDB. By removing MQTT and other intermediate layers, it’s perfect for small to medium sites needing quick deployment, minimal configuration, and reliable historical logging with Grafana dashboards.
+For SNAP-PAC users without a groov EPIC, Node-RED can also be installed on the backend host.
+
+######For SNAP-PAC users without a groov EPIC, Node-RED can be installed on the backend host by adding it to the ```docker-compose.yml```.
+
+## Getting Started
+
+1. **Download required files**  
+   Place the following files on the backend host (IPC, server, or RPi5):
+   - `docker-compose.yml` (for InfluxDB + Grafana)
+   - `nginx.conf` (for proxying Grafana, optional)
+
+2. **Launch Docker services on the backend host**  
+   Open a terminal in the project directory and run:
   ```
   docker compose up -d
   ```
 * Navigate to:
   * Grafana: http://localhost
   * InfluxDB: http://localhost:8086
+
+
+Todo's ⤵
+### Setup Node-RED
+
+### Setup InfluxDB
+
+### Setup Grafana
