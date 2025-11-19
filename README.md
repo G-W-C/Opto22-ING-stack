@@ -10,20 +10,27 @@ This architecture collects data from Opto22 controllers (groov EPIC or SNAP-PAC)
 
 The Docker stack for **InfluxDB** and **Grafana** must run on a separate **IPC**, **server**, or even a **Raspberry Pi 5 with NVMe storage**.
 
-This stack is inspired by the MING stack (MQTT → Node-RED → InfluxDB → Grafana) but simplifies it by using node-red-contrib-pac to collect data from Opto22 controllers and node-red-contrib-influxdb to send it to InfluxDB. By removing MQTT and other intermediate layers, it’s perfect for small to medium sites needing quick deployment, minimal configuration, and reliable historical logging with Grafana dashboards.
-For SNAP-PAC users without a groov EPIC, Node-RED can also be installed on the backend host.
+This stack is inspired by the MING stack (MQTT → Node-RED → InfluxDB → Grafana) but simplifies it by removing MQTT and other intermediate layers. It’s ideal for small to medium sites that need quick deployment, minimal configuration, and reliable historical logging with Grafana dashboards.
 
-######For SNAP-PAC users without a groov EPIC, Node-RED can be installed on the backend host by adding it to the ```docker-compose.yml```.
+###### For SNAP-PAC users without a groov EPIC, Node-RED can be installed on the backend host by adding it to the ```docker-compose.yml```.
+🚧 Todo: Add a SNAP-PAC folder containing a docker-compose.yml for non-EPIC architectures.
 
 ## Getting Started
+
+### Prerequisites
+- **Docker** and **Docker Compose** must be installed on the backend host.  
+  For installation instructions, see the official Docker documentation: https://www.docker.com/get-started/
+
+### Steps
 
 1. **Download required files**  
    Place the following files on the backend host (IPC, server, or RPi5):
    - `docker-compose.yml` (for InfluxDB + Grafana)
-   - `nginx.conf` (for proxying Grafana, optional)
+   - `nginx.conf`
 
 2. **Launch Docker services on the backend host**  
    Open a terminal in the project directory and run:
+
   ```
   docker compose up -d
   ```
@@ -32,7 +39,7 @@ For SNAP-PAC users without a groov EPIC, Node-RED can also be installed on the b
   * InfluxDB: http://localhost:8086
 
 
-Todo's ⤵
+🚧 Todo:
 ### Setup Node-RED
 
 ### Setup InfluxDB
