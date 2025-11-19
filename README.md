@@ -8,7 +8,7 @@ The docker-compose.yml is configured for users running Node-RED on the groov EPI
 * Download the docker-compose.yml and nignx.conf to the same project directory.
 * Open a terminal in the project directory and run the following
   ```
-  docker copmose up -d
+  docker compose up -d
   ```
 * Navigate to:
   * Grafana: http://localhost
