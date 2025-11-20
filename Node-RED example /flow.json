@@ -1,0 +1,130 @@
+[
+    {
+        "id": "ed7910a16badadac",
+        "type": "pac-read",
+        "z": "9395bef71a724937",
+        "device": "",
+        "dataType": "int32-table",
+        "tagName": "",
+        "tableStartIndex": "",
+        "tableLength": "",
+        "value": "alm",
+        "valueType": "msg",
+        "topic": "",
+        "topicType": "none",
+        "name": "",
+        "x": 400,
+        "y": 420,
+        "wires": [
+            [
+                "4e78b4f7fbe9d377"
+            ]
+        ]
+    },
+    {
+        "id": "5adf24cd0b5589b2",
+        "type": "inject",
+        "z": "9395bef71a724937",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 420,
+        "wires": [
+            [
+                "ed7910a16badadac"
+            ]
+        ]
+    },
+    {
+        "id": "8775787bf00202d5",
+        "type": "debug",
+        "z": "9395bef71a724937",
+        "name": "Debug Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 900,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4e78b4f7fbe9d377",
+        "type": "pac-read",
+        "z": "9395bef71a724937",
+        "device": "",
+        "dataType": "float-table",
+        "tagName": "",
+        "tableStartIndex": "",
+        "tableLength": "",
+        "value": "temp",
+        "valueType": "msg",
+        "topic": "",
+        "topicType": "none",
+        "name": "",
+        "x": 560,
+        "y": 420,
+        "wires": [
+            [
+                "57775eefa5ad7891"
+            ]
+        ]
+    },
+    {
+        "id": "57775eefa5ad7891",
+        "type": "function",
+        "z": "9395bef71a724937",
+        "name": "Filter Tags",
+        "func": "//variables/\nvar alm = msg.alm;\nvar temp =msg.temp;\nvar almLast = flow.get(\"alm\") || alm;\nvar tempLast = flow.get(\"temp\") || temp;\n\n//filter arrays//\n\nvar almOldMap = new Map(almLast.map(item => [item.name, item.value]));\nvar almChanged = alm.filter(item => almOldMap.get(item.name) !== item.value);\nvar tempOldMap = new Map(tempLast.map(item => [item.name, item.value]));\nvar tempChanged = temp.filter(item => tempOldMap.get(item.name) !== item.value);\n\n\n\n\nconst alarmMap = new Map(almChanged.map(item => [item.name.replace(\"_Alm\", \"\"), item.value]));\n\n// Helper function to assign group\nfunction getGroup(freezerId) {\n    const num = parseInt(freezerId.replace(\"FFM_\", \"\"));\n    if (num >= 1 && num <= 50) return \"A\";\n    if (num >= 51 && num <= 100) return \"B\";\n    if (num >= 101 && num <= 150) return \"C\";\n    if (num >= 151 && num <= 200) return \"D\";\n    return \"Unknown\";\n}\n\n// alm arrays\nconst almArray = almChanged.map(almItem => {\n    const freezerId = almItem.name.replace(\"_Alm\", \"\");\n    return [\n        {\n            alarmActive: almItem.value || 0 // Convert 0/1 to boolean\n        },\n        {\n            group: getGroup(freezerId),\n            freezerId: freezerId\n        }\n    ];\n});\n// temp arrays\nconst tempArray = tempChanged.map(tempItem => {\n    const freezerId = tempItem.name.replace(\"_Temp\", \"\");\n    return [\n        {\n            temp_C: parseFloat(tempItem.value.toFixed(2))\n        },\n        {\n            group: getGroup(freezerId),\n            freezerId: freezerId\n        }\n    ];\n});\n\n//Merge arrays//\nvar merged = [...almArray,...tempArray];\nmsg.almArray = almArray\nmsg.tempArray = tempArray\n\n//set measurment //\n\nmsg.measurement = \"freezer_status\";\n\n//set flow vars//\nflow.set(\"alm\",alm);\nflow.set(\"temp\", temp);\n\nmsg.payload = merged\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 420,
+        "wires": [
+            [
+                "8775787bf00202d5",
+                "dc93d935b5aba971"
+            ]
+        ]
+    },
+    {
+        "id": "dc93d935b5aba971",
+        "type": "influxdb out",
+        "z": "9395bef71a724937",
+        "influxdb": "",
+        "name": "",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "test1",
+        "bucket": "test2",
+        "x": 880,
+        "y": 420,
+        "wires": []
+    }
+]
