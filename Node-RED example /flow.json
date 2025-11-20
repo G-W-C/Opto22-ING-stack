@@ -121,8 +121,8 @@
         "database": "database",
         "precisionV18FluxV20": "ms",
         "retentionPolicyV18Flux": "",
-        "org": "test1",
-        "bucket": "test2",
+        "org": "",
+        "bucket": "",
         "x": 880,
         "y": 420,
         "wires": []
